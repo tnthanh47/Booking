@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"encoding/json"
 	"github.com/tnthanh47/Booking/pkg/config"
 	"github.com/tnthanh47/Booking/pkg/models"
 	"github.com/tnthanh47/Booking/pkg/render"
+	"log"
 	"net/http"
 )
 
@@ -52,4 +54,30 @@ func (m *Repository) About(w http.ResponseWriter, req *http.Request) {
 			MapString: strMap,
 		},
 	)
+}
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+func (m *Repository) SearchAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	res := jsonResponse{
+		OK:      true,
+		Message: "success",
+	}
+	out, err := json.Marshal(res)
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Println(string(out))
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	write, err := w.Write(out)
+	if err != nil {
+		return
+	}
+
+	log.Println(write)
 }
