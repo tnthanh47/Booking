@@ -1,0 +1,13 @@
+{{template "base" .}}
+
+{{define "content"}}
+    <h1>This is about page</h1>
+        <p>{{index .MapString "HI"}}</p>
+
+        {{if ne (index .MapString "remote_ip") ""}}
+            <p>Your remote ip is {{index .MapString "remote_ip"}}</p>
+            <p>Your session time life is {{index .MapString "session_life_time"}}</p>
+         {{else}}
+             <p>I dont know your remote ip, pls visit <a href="/">Home</a> to get ip</p>
+         {{end}}
+{{end}}
