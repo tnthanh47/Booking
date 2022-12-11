@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"fmt"
+	"github.com/justinas/nosurf"
 	"github.com/tnthanh47/Booking/pkg/config"
 	"github.com/tnthanh47/Booking/pkg/models"
 	"html/template"
@@ -19,12 +20,13 @@ func NewTemplateCache(config *config.AppConfig) {
 	templateCache = config
 }
 
-func InitData(td *models.TemplateData) *models.TemplateData {
+func InitData(td *models.TemplateData, r *http.Request) *models.TemplateData {
 	td.MapString["HI"] = "THANH LE NGUYEN"
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string, tmpData *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, tmpData *models.TemplateData) {
 
 	var tc map[string]*template.Template
 
@@ -43,7 +45,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, tmpData *models.Template
 
 	buf := new(bytes.Buffer)
 
-	tmpData = InitData(tmpData)
+	tmpData = InitData(tmpData, r)
 
 	_ = t.Execute(buf, tmpData)
 

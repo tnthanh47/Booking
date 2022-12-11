@@ -34,7 +34,7 @@ func (m *Repository) Home(w http.ResponseWriter, request *http.Request) {
 	strMap := map[string]string{}
 	strMap["test"] = "hello"
 	render.RenderTemplate(
-		w, "home.page.html", &models.TemplateData{
+		w, request, "home.page.html", &models.TemplateData{
 			MapString: strMap,
 		},
 	)
@@ -50,7 +50,7 @@ func (m *Repository) About(w http.ResponseWriter, req *http.Request) {
 	strMap["remote_ip"] = remoteIp
 	strMap["session_life_time"] = sessionLifeTime.String()
 	render.RenderTemplate(
-		w, "about.page.html", &models.TemplateData{
+		w, req, "about.page.html", &models.TemplateData{
 			MapString: strMap,
 		},
 	)
@@ -80,4 +80,8 @@ func (m *Repository) SearchAvailabilityJSON(w http.ResponseWriter, r *http.Reque
 	}
 
 	log.Println(write)
+}
+
+func (m *Repository) PostedAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Posted"))
 }
