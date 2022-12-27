@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/tnthanh47/Booking/pkg/config"
-	"github.com/tnthanh47/Booking/pkg/models"
-	"github.com/tnthanh47/Booking/pkg/render"
+	"github.com/tnthanh47/Booking/internal/config"
+	"github.com/tnthanh47/Booking/internal/models"
+	"github.com/tnthanh47/Booking/internal/render"
 	"log"
 	"net/http"
 )
