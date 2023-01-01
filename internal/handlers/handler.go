@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/tnthanh47/Booking/internal/config"
+	"github.com/tnthanh47/Booking/internal/forms"
 	"github.com/tnthanh47/Booking/internal/models"
 	"github.com/tnthanh47/Booking/internal/render"
 	"log"
@@ -42,7 +43,7 @@ func (m *Repository) Home(w http.ResponseWriter, request *http.Request) {
 
 func (m *Repository) About(w http.ResponseWriter, req *http.Request) {
 
-	remoteIp := m.App.Session.GetString(req.Context(), "remote_ip")
+	remoteIp := Repo.App.Session.GetString(req.Context(), "remote_ip")
 	sessionLifeTime := m.App.Session.Lifetime
 
 	strMap := map[string]string{}
@@ -84,4 +85,16 @@ func (m *Repository) SearchAvailabilityJSON(w http.ResponseWriter, r *http.Reque
 
 func (m *Repository) PostedAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Posted"))
+}
+
+// Đặt trước
+func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(
+		w, r, "make-reservation.page.html", &models.TemplateData{
+			Form: forms.New(nil),
+		},
+	)
+}
+
+func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 }

@@ -21,7 +21,6 @@ func NewTemplateCache(config *config.AppConfig) {
 }
 
 func InitData(td *models.TemplateData, r *http.Request) *models.TemplateData {
-	td.MapString["HI"] = "THANH LE NGUYEN"
 	td.CSRFToken = nosurf.Token(r)
 	return td
 }
@@ -70,7 +69,6 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 	for _, page := range pages {
 		name := filepath.Base(page)
-		fmt.Println("Page is currently: ", page)
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			return myCache, err
