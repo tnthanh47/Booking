@@ -52,6 +52,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, tmpData
 	if err != nil {
 		fmt.Println("Error when write template to browser")
 	}
+
 }
 
 func Test() {
@@ -68,6 +69,8 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	}
 
 	for _, page := range pages {
+		fmt.Println(page)
+
 		name := filepath.Base(page)
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
@@ -85,7 +88,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 				return myCache, err
 			}
 		}
-
+		
 		myCache[name] = ts
 	}
 
