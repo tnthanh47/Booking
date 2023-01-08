@@ -25,7 +25,7 @@ func InitData(td *models.TemplateData, r *http.Request) *models.TemplateData {
 	return td
 }
 
-func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, tmpData *models.TemplateData) {
+func Template(w http.ResponseWriter, r *http.Request, tmpl string, tmpData *models.TemplateData) {
 
 	var tc map[string]*template.Template
 
@@ -69,7 +69,6 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	}
 
 	for _, page := range pages {
-		fmt.Println(page)
 
 		name := filepath.Base(page)
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
@@ -88,7 +87,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 				return myCache, err
 			}
 		}
-		
+
 		myCache[name] = ts
 	}
 

@@ -34,7 +34,7 @@ func (m *Repository) Home(w http.ResponseWriter, request *http.Request) {
 	//Perform some logic
 	strMap := map[string]string{}
 	strMap["test"] = "hello"
-	render.RenderTemplate(
+	render.Template(
 		w, request, "home.page.html", &models.TemplateData{
 			MapString: strMap,
 		},
@@ -50,7 +50,7 @@ func (m *Repository) About(w http.ResponseWriter, req *http.Request) {
 	strMap["test"] = "hello"
 	strMap["remote_ip"] = remoteIp
 	strMap["session_life_time"] = sessionLifeTime.String()
-	render.RenderTemplate(
+	render.Template(
 		w, req, "about.page.html", &models.TemplateData{
 			MapString: strMap,
 		},
@@ -87,11 +87,16 @@ func (m *Repository) PostedAvailabilityJSON(w http.ResponseWriter, r *http.Reque
 	w.Write([]byte("Posted"))
 }
 
-// Đặt trước
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(
+
+	var emptyReservation models.Reservation
+	data := make(map[string]interface{})
+	data["reservation"] = emptyReservation
+
+	render.Template(
 		w, r, "make-reservation.page.html", &models.TemplateData{
 			Form: forms.New(nil),
+			Data: data,
 		},
 	)
 }
@@ -111,16 +116,25 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := forms.New(r.PostForm)
-	form.Has("first_name", r)
+	//form.Has("first_name", r)
+
+	form.Required("first_name", "last_name", "email", "phone")
+	form.MinLength("first_name", 3, r)
+	form.IsEmail("email")
+
 	if !form.Valid() {
 		data := make(map[string]interface{})
-		data["reservarion"] = reservation
+		data["reservation"] = reservation
 
-		render.RenderTemplate(
+		render.Template(
 			w, r, "make-reservation.page.html", &models.TemplateData{
 				Form: form,
 				Data: data,
 			},
 		)
 	}
+}
+
+func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
+
 }
