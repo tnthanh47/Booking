@@ -14,13 +14,16 @@ import (
 
 var functions = template.FuncMap{}
 
-var templateCache *config.AppConfig
+var app *config.AppConfig
 
 func NewTemplateCache(config *config.AppConfig) {
-	templateCache = config
+	app = config
 }
 
 func InitData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	td.Flash = app.Session.PopString(r.Context(), "flash")
+	td.Warning = app.Session.PopString(r.Context(), "warning")
+	td.Error = app.Session.PopString(r.Context(), "error")
 	td.CSRFToken = nosurf.Token(r)
 	return td
 }
@@ -29,8 +32,8 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, tmpData *mode
 
 	var tc map[string]*template.Template
 
-	if templateCache.UseCache {
-		tc = templateCache.TemplateCache
+	if app.UseCache {
+		tc = app.TemplateCache
 	} else {
 		tc, _ = CreateTemplateCache()
 	}
