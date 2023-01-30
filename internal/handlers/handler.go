@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/tnthanh47/Booking/internal/config"
 	"github.com/tnthanh47/Booking/internal/forms"
+	"github.com/tnthanh47/Booking/internal/helper"
 	"github.com/tnthanh47/Booking/internal/models"
 	"github.com/tnthanh47/Booking/internal/render"
 	"log"
@@ -27,34 +29,19 @@ func NewHandler(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, request *http.Request) {
-
-	remoteIp := request.RemoteAddr
-
-	m.App.Session.Put(request.Context(), "remote_ip", remoteIp)
-	//Perform some logic
-	strMap := map[string]string{}
-	strMap["test"] = "hello"
-	render.Template(
-		w, request, "home.page.html", &models.TemplateData{
-			MapString: strMap,
-		},
-	)
+	render.Template(w, request, "home.page.html", &models.TemplateData{})
 }
 
 func (m *Repository) About(w http.ResponseWriter, req *http.Request) {
-
-	remoteIp := Repo.App.Session.GetString(req.Context(), "remote_ip")
-	sessionLifeTime := m.App.Session.Lifetime
-
-	strMap := map[string]string{}
-	strMap["test"] = "hello"
-	strMap["remote_ip"] = remoteIp
-	strMap["session_life_time"] = sessionLifeTime.String()
-	render.Template(
-		w, req, "about.page.html", &models.TemplateData{
-			MapString: strMap,
-		},
-	)
+	//
+	//remoteIp := Repo.App.Session.GetString(req.Context(), "remote_ip")
+	//sessionLifeTime := m.App.Session.Lifetime
+	//
+	//strMap := map[string]string{}
+	//strMap["test"] = "hello"
+	//strMap["remote_ip"] = remoteIp
+	//strMap["session_life_time"] = sessionLifeTime.String()
+	render.Template(w, req, "about.page.html", &models.TemplateData{})
 }
 
 type jsonResponse struct {
@@ -69,7 +56,8 @@ func (m *Repository) SearchAvailabilityJSON(w http.ResponseWriter, r *http.Reque
 	}
 	out, err := json.Marshal(res)
 	if err != nil {
-		log.Println(err)
+		helper.ServerError(w, err)
+		return
 	}
 
 	log.Println(string(out))
@@ -103,8 +91,9 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
+	err = errors.New("this is an error")
 	if err != nil {
-		log.Println(err)
+		helper.ServerError(w, err)
 		return
 	}
 
@@ -144,7 +133,7 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation-summary").(models.Reservation)
 	if !ok {
-		log.Println("Cannot get item from session")
+		m.App.ErrorLog.Println("Cannot get item from session")
 		m.App.Session.Put(r.Context(), "error", "Cannot get reservation summary from session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
