@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/alexedwards/scs/v2"
 	"github.com/tnthanh47/Booking/internal/config"
+	"github.com/tnthanh47/Booking/internal/driver"
 	"github.com/tnthanh47/Booking/internal/handlers"
 	"github.com/tnthanh47/Booking/internal/helper"
 	"github.com/tnthanh47/Booking/internal/models"
@@ -61,6 +62,9 @@ func run() error {
 	session.Cookie.SameSite = http.SameSiteLaxMode
 
 	appConfig.Session = session
+
+	log.Println("Connecting to database...")
+	db, err := driver.ConnectSQL("host=localhost port=")
 
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
