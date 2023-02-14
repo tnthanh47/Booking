@@ -18,7 +18,7 @@ var functions = template.FuncMap{}
 
 var app *config.AppConfig
 
-func NewTemplateCache(config *config.AppConfig) {
+func NewRender(config *config.AppConfig) {
 	app = config
 }
 

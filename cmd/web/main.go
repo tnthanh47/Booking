@@ -25,12 +25,11 @@ var errorLog *log.Logger
 
 func main() {
 
-	err := run()
-
+	db, err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	defer db.SQL.Close()
 	fmt.Printf(fmt.Sprintf("Start Application listening to Port %s", portNumber))
 	//_ = http.ListenAndServe(portNumber, nil)
 	srv := &http.Server{
@@ -42,10 +41,13 @@ func main() {
 	log.Fatal(err)
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 
 	// Register to store kind of data in session
 	gob.Register(models.Reservation{})
+	gob.Register(models.User{})
+	gob.Register(models.Room{})
+	gob.Register(models.Restriction{})
 
 	appConfig.IsProduction = false
 
@@ -64,7 +66,11 @@ func run() error {
 	appConfig.Session = session
 
 	log.Println("Connecting to database...")
-	db, err := driver.ConnectSQL("host=localhost port=")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=booking user=postgres password=123")
+	if err != nil {
+		log.Fatal("Cannot connect to database.")
+	}
+	log.Println("Connected to database.")
 
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
@@ -74,10 +80,10 @@ func run() error {
 	appConfig.TemplateCache = tc
 	appConfig.UseCache = false
 
-	repo := handlers.NewRepo(&appConfig)
+	repo := handlers.NewRepo(&appConfig, db)
 	handlers.NewHandler(repo)
-	render.NewTemplateCache(&appConfig)
+	render.NewRender(&appConfig)
 	helper.NewHelper(&appConfig)
 
-	return nil
+	return db, nil
 }
